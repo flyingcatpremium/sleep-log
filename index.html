@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<meta name="theme-color" content="#0a0e1a" />
+<meta name="theme-color" content="#f5f1e8" />
 <title>Nocturne · Sleep Log</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,19 +11,19 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
   :root {
-    --bg: #0a0e1a;
-    --bg-2: #11162a;
-    --panel: rgba(255,255,255,0.04);
-    --panel-2: rgba(255,255,255,0.06);
-    --border: rgba(255,255,255,0.09);
-    --ink: #ece9e0;
-    --ink-dim: #8a8b95;
-    --ink-faint: #4a4d5a;
-    --accent: #f4d35e;        /* moonlight gold */
-    --accent-2: #88a0c8;      /* dusk blue */
-    --good: #7fb685;
-    --bad: #d97a6c;
-    --line-threshold: rgba(217,122,108,0.55);
+    --bg: #f5f1e8;           /* warm paper */
+    --bg-2: #fbf8f1;         /* card bg for modals */
+    --panel: rgba(255,255,255,0.65);
+    --panel-2: rgba(255,255,255,0.85);
+    --border: rgba(40,35,30,0.12);
+    --ink: #2a2620;          /* dark espresso */
+    --ink-dim: #6b655c;
+    --ink-faint: #a8a298;
+    --accent: #c28a2a;        /* amber gold (dark enough for light bg) */
+    --accent-2: #3f5a7a;      /* deep dusk blue */
+    --good: #4a8055;
+    --bad: #b14a3a;
+    --line-threshold: rgba(177,74,58,0.55);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -31,21 +31,21 @@
 
   body {
     background:
-      radial-gradient(ellipse at 20% -10%, rgba(136,160,200,0.12), transparent 50%),
-      radial-gradient(ellipse at 110% 10%, rgba(244,211,94,0.06), transparent 45%),
-      linear-gradient(180deg, #0a0e1a 0%, #0a0e1a 40%, #0d1322 100%);
+      radial-gradient(ellipse at 20% -10%, rgba(63,90,122,0.08), transparent 50%),
+      radial-gradient(ellipse at 110% 10%, rgba(194,138,42,0.09), transparent 45%),
+      linear-gradient(180deg, #f5f1e8 0%, #f5f1e8 40%, #efe9dc 100%);
     background-attachment: fixed;
   }
 
-  /* subtle grain */
+  /* subtle grain — lighter for day mode */
   body::before {
     content: "";
     position: fixed; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     pointer-events: none;
-    opacity: 0.5;
+    opacity: 0.4;
     z-index: 1;
-    mix-blend-mode: overlay;
+    mix-blend-mode: multiply;
   }
 
   .wrap {
@@ -111,7 +111,7 @@
     position: absolute;
     top: 0; right: 0;
     width: 140px; height: 140px;
-    background: radial-gradient(circle at top right, rgba(244,211,94,0.08), transparent 60%);
+    background: radial-gradient(circle at top right, rgba(194,138,42,0.10), transparent 60%);
     pointer-events: none;
   }
 
@@ -122,6 +122,9 @@
     text-transform: uppercase;
     color: var(--ink-faint);
     margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
   }
   .today-date {
     font-family: 'Fraunces', serif;
@@ -145,7 +148,7 @@
     border: 1px solid var(--border);
     border-radius: 3px;
     padding: 14px 14px 16px;
-    background: rgba(0,0,0,0.15);
+    background: rgba(255,255,255,0.55);
   }
   .slot-label {
     font-family: 'JetBrains Mono', monospace;
@@ -154,6 +157,15 @@
     text-transform: uppercase;
     color: var(--ink-faint);
     margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .label-icon {
+    width: 11px;
+    height: 11px;
+    flex-shrink: 0;
+    opacity: 0.75;
   }
   .slot-value {
     font-family: 'Fraunces', serif;
@@ -170,7 +182,7 @@
   .btn-wake {
     width: 100%;
     background: var(--accent);
-    color: #1a1408;
+    color: #fbf8f1;
     border: none;
     padding: 11px 14px;
     font-family: 'JetBrains Mono', monospace;
@@ -181,9 +193,9 @@
     cursor: pointer;
     border-radius: 2px;
     transition: all 0.18s ease;
-    box-shadow: 0 0 0 0 rgba(244,211,94,0.4);
+    box-shadow: 0 0 0 0 rgba(194,138,42,0.25);
   }
-  .btn-wake:hover { transform: translateY(-1px); box-shadow: 0 4px 18px -4px rgba(244,211,94,0.5); }
+  .btn-wake:hover { transform: translateY(-1px); box-shadow: 0 4px 16px -4px rgba(194,138,42,0.45); }
   .btn-wake:active { transform: translateY(0); }
   .btn-wake.recorded {
     background: transparent;
@@ -202,7 +214,7 @@
     font-size: 12px;
     letter-spacing: 0.1em;
     border-radius: 2px;
-    color-scheme: dark;
+    color-scheme: light;
   }
   .sleep-input:focus { outline: none; border-color: var(--accent-2); }
 
@@ -246,7 +258,11 @@
     font-weight: 400;
     font-style: italic;
     letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
+  .title-icon { width: 14px; height: 14px; opacity: 0.6; flex-shrink: 0; }
   .range-tabs {
     display: flex;
     gap: 0;
@@ -267,7 +283,7 @@
     transition: all 0.15s;
   }
   .range-tabs button + button { border-left: 1px solid var(--border); }
-  .range-tabs button.active { background: var(--accent); color: #1a1408; }
+  .range-tabs button.active { background: var(--accent); color: #fbf8f1; }
   .range-tabs button:not(.active):hover { color: var(--ink); }
 
   .chart-wrap { position: relative; height: 320px; }
@@ -298,7 +314,98 @@
     background: var(--bad);
   }
 
-  /* ───────── History (two columns) ───────── */
+  /* ───────── Hero art ───────── */
+  .hero {
+    margin: 8px 0 24px;
+    padding: 28px 22px 24px;
+    background: linear-gradient(180deg, rgba(251,248,241,0.6) 0%, rgba(245,241,232,0) 100%);
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-art {
+    width: 100%;
+    max-width: 420px;
+    height: auto;
+    display: block;
+    margin: 0 auto 14px;
+    opacity: 0.92;
+  }
+  .hero-quote {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 15px;
+    line-height: 1.5;
+    text-align: center;
+    color: var(--ink-dim);
+    max-width: 380px;
+    margin: 0 auto;
+    letter-spacing: 0.01em;
+  }
+  .hero-quote-attr {
+    display: block;
+    margin-top: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-style: normal;
+    font-size: 9px;
+    letter-spacing: 0.24em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+  }
+
+  /* ───────── Section divider ───────── */
+  .divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 26px 0 22px;
+    color: var(--ink-faint);
+    opacity: 0.55;
+  }
+  .divider svg { width: 44px; height: 10px; }
+  .divider::before, .divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    max-width: 120px;
+    margin: 0 14px;
+  }
+
+  /* section title with little ornament */
+  .section-title-small {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 13px;
+    color: var(--ink-faint);
+    letter-spacing: 0.04em;
+  }
+  .history-head {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+  }
+  .add-entry-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--ink-dim);
+    padding: 8px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.18s;
+  }
+  .add-entry-btn:hover {
+    color: var(--ink);
+    border-color: var(--accent-2);
+    background: rgba(63,90,122,0.06);
+  }
   .history {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -317,7 +424,11 @@
     font-style: italic;
     margin-bottom: 4px;
     padding: 0 4px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
   }
+  .history-col h3 .title-icon { width: 13px; height: 13px; opacity: 0.55; }
   .history-col .col-sub {
     font-family: 'JetBrains Mono', monospace;
     font-size: 8px;
@@ -409,13 +520,14 @@
   }
   .field input, .field textarea {
     width: 100%;
-    background: rgba(0,0,0,0.3);
+    background: rgba(255,255,255,0.8);
     border: 1px solid var(--border);
     color: var(--ink);
     padding: 10px 12px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 12px;
     border-radius: 2px;
+    color-scheme: light;
   }
   .field input:focus, .field textarea:focus { outline: none; border-color: var(--accent-2); }
   .field .hint { font-family: 'Fraunces', serif; font-size: 12px; color: var(--ink-faint); margin-top: 6px; font-style: italic; }
@@ -433,14 +545,14 @@
     cursor: pointer;
     border: 1px solid var(--border);
   }
-  .btn-primary { background: var(--accent); color: #1a1408; border-color: var(--accent); font-weight: 500; }
+  .btn-primary { background: var(--accent); color: #fbf8f1; border-color: var(--accent); font-weight: 500; }
   .btn-secondary { background: transparent; color: var(--ink-dim); }
   .btn-danger { background: transparent; color: var(--bad); border-color: rgba(217,122,108,0.4); }
 
   .sync-status {
     margin-top: 16px;
     padding: 10px 12px;
-    background: rgba(0,0,0,0.25);
+    background: rgba(0,0,0,0.04);
     border-left: 2px solid var(--ink-faint);
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px;
@@ -486,6 +598,10 @@
     .wrap { padding: 22px 14px 60px; }
     .row { grid-template-columns: 1fr; }
     .chart-wrap { height: 280px; }
+    .hero { padding: 20px 16px 18px; margin-bottom: 20px; }
+    .hero-art { max-width: 300px; margin-bottom: 12px; }
+    .hero-quote { font-size: 13px; }
+    .divider { margin: 20px 0 16px; }
     .history { gap: 10px; }
     .history-col { padding: 14px 10px 4px; }
     .hist-row { grid-template-columns: 48px 1fr 20px; font-size: 11px; gap: 4px; padding: 9px 2px; }
@@ -507,17 +623,34 @@
 
   <!-- TODAY CARD -->
   <section class="today">
-    <div class="today-label">Today</div>
+    <div class="today-label">
+      <svg class="label-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round">
+        <circle cx="8" cy="8" r="5.5"/>
+        <circle cx="8" cy="8" r="1.5" fill="currentColor" stroke="none"/>
+      </svg>
+      <span>Today</span>
+    </div>
     <div class="today-date" id="todayDate">—</div>
 
     <div class="row">
       <div class="slot">
-        <div class="slot-label">Woke at</div>
+        <div class="slot-label">
+          <svg class="label-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round">
+            <circle cx="8" cy="8" r="3"/>
+            <path d="M8 1.5v1.8M8 12.7v1.8M14.5 8h-1.8M3.3 8H1.5M12.6 3.4l-1.3 1.3M4.7 11.3l-1.3 1.3M12.6 12.6l-1.3-1.3M4.7 4.7L3.4 3.4"/>
+          </svg>
+          <span>Woke at</span>
+        </div>
         <div class="slot-value empty" id="wakeValue">not yet</div>
         <button class="btn-wake" id="wakeBtn">I'm Awake</button>
       </div>
       <div class="slot">
-        <div class="slot-label">Slept at</div>
+        <div class="slot-label">
+          <svg class="label-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M13 9.5a5.5 5.5 0 1 1-6.5-7A4.3 4.3 0 0 0 13 9.5z"/>
+          </svg>
+          <span>Slept at</span>
+        </div>
         <div class="slot-value empty" id="sleepValue">not set</div>
         <input type="time" class="sleep-input" id="sleepInput" />
       </div>
@@ -532,10 +665,24 @@
     <span>streak <strong id="qsStreak">0</strong></span>
   </div>
 
+  <!-- ornamental divider -->
+  <div class="divider" aria-hidden="true">
+    <svg viewBox="0 0 44 10" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="0.6">
+      <path d="M2 5 Q 8 1, 14 5 T 26 5 T 38 5" />
+      <circle cx="22" cy="5" r="1.2" fill="currentColor" stroke="none"/>
+    </svg>
+  </div>
+
   <!-- CHART -->
   <section class="chart-card">
     <div class="chart-head">
-      <div class="chart-title">Hours of the night</div>
+      <div class="chart-title">
+        <svg class="title-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="8" cy="8" r="6.5"/>
+          <path d="M8 4v4l2.5 1.5"/>
+        </svg>
+        <span>Hours of the night</span>
+      </div>
       <div class="range-tabs" id="rangeTabs">
         <button data-range="week" class="active">Week</button>
         <button data-range="month">Month</button>
@@ -546,23 +693,127 @@
       <canvas id="chart"></canvas>
     </div>
     <div class="chart-legend">
-      <span><span class="leg-dot" style="background:#88a0c8"></span>sleep → wake</span>
+      <span><span class="leg-dot" style="background:#3f5a7a"></span>sleep → wake</span>
       <span><span class="leg-line"></span>limits (00:00 / 08:00)</span>
+      <span style="color:var(--ink-dim);">↑ hours above bar = duration</span>
     </div>
   </section>
 
+  <!-- ornamental divider -->
+  <div class="divider" aria-hidden="true">
+    <svg viewBox="0 0 44 10" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="0.6">
+      <circle cx="10" cy="5" r="1" fill="currentColor" stroke="none"/>
+      <path d="M14 5 L 30 5" />
+      <circle cx="34" cy="5" r="1" fill="currentColor" stroke="none"/>
+    </svg>
+  </div>
+
   <!-- HISTORY -->
+  <div class="history-head">
+    <button class="add-entry-btn" id="addEntryBtn">+ Add / edit any date</button>
+  </div>
   <section class="history">
     <div class="history-col">
-      <h3>Recent nights</h3>
+      <h3>
+        <svg class="title-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M13 9.5a5.5 5.5 0 1 1-6.5-7A4.3 4.3 0 0 0 13 9.5z"/>
+        </svg>
+        <span>Recent nights</span>
+      </h3>
       <div class="col-sub">↓ slept at</div>
       <div id="historyNights"></div>
     </div>
     <div class="history-col">
-      <h3>Recent mornings</h3>
+      <h3>
+        <svg class="title-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round">
+          <circle cx="8" cy="8" r="3"/>
+          <path d="M8 1.5v1.8M8 12.7v1.8M14.5 8h-1.8M3.3 8H1.5M12.6 3.4l-1.3 1.3M4.7 11.3l-1.3 1.3M12.6 12.6l-1.3-1.3M4.7 4.7L3.4 3.4"/>
+        </svg>
+        <span>Recent mornings</span>
+      </h3>
       <div class="col-sub">↑ woke at</div>
       <div id="historyMornings"></div>
     </div>
+  </section>
+
+  <!-- ornamental divider before hero -->
+  <div class="divider" aria-hidden="true">
+    <svg viewBox="0 0 44 10" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="0.6">
+      <path d="M2 5 Q 8 1, 14 5 T 26 5 T 38 5" />
+      <circle cx="22" cy="5" r="1.2" fill="currentColor" stroke="none"/>
+    </svg>
+  </div>
+
+  <!-- HERO ART (moved to bottom) -->
+  <section class="hero">
+    <svg class="hero-art" viewBox="0 0 420 140" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <defs>
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#3f5a7a" stop-opacity="0.08"/>
+          <stop offset="100%" stop-color="#c28a2a" stop-opacity="0.06"/>
+        </linearGradient>
+        <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="0.4"/>
+        </filter>
+      </defs>
+
+      <!-- soft wash background -->
+      <rect x="0" y="0" width="420" height="140" fill="url(#sky)"/>
+
+      <!-- scattered stars -->
+      <g fill="#3f5a7a" opacity="0.55">
+        <circle cx="38" cy="26" r="0.9"/>
+        <circle cx="72" cy="14" r="0.6"/>
+        <circle cx="108" cy="32" r="0.8"/>
+        <circle cx="145" cy="18" r="0.5"/>
+        <circle cx="180" cy="28" r="0.9"/>
+        <circle cx="290" cy="22" r="0.6"/>
+        <circle cx="328" cy="38" r="0.8"/>
+        <circle cx="368" cy="16" r="0.7"/>
+        <circle cx="396" cy="34" r="0.5"/>
+      </g>
+
+      <!-- little 4-point star sparkle -->
+      <g fill="#c28a2a" opacity="0.75" transform="translate(250 20)">
+        <path d="M0,-5 L0.8,-0.8 L5,0 L0.8,0.8 L0,5 L-0.8,0.8 L-5,0 L-0.8,-0.8 Z"/>
+      </g>
+      <g fill="#c28a2a" opacity="0.5" transform="translate(60 50)">
+        <path d="M0,-3 L0.5,-0.5 L3,0 L0.5,0.5 L0,3 L-0.5,0.5 L-3,0 L-0.5,-0.5 Z"/>
+      </g>
+
+      <!-- crescent moon (engraving style) -->
+      <g transform="translate(210 60)">
+        <circle cx="0" cy="0" r="28" fill="#fbf8f1" stroke="#3f5a7a" stroke-width="0.7" opacity="0.9"/>
+        <circle cx="9" cy="-3" r="26" fill="#f5f1e8"/>
+        <!-- hatching for texture -->
+        <g stroke="#3f5a7a" stroke-width="0.35" opacity="0.5">
+          <path d="M -22,-8 Q -18,-10 -14,-8" fill="none"/>
+          <path d="M -24,0 Q -19,-2 -14,0" fill="none"/>
+          <path d="M -22,8 Q -18,6 -14,8" fill="none"/>
+          <path d="M -18,14 Q -14,12 -10,14" fill="none"/>
+          <path d="M -18,-14 Q -14,-16 -10,-14" fill="none"/>
+        </g>
+      </g>
+
+      <!-- mountain silhouette -->
+      <g fill="#3f5a7a" opacity="0.22">
+        <path d="M0,140 L0,118 L42,92 L78,106 L118,78 L168,104 L210,86 L252,110 L298,94 L346,116 L390,98 L420,114 L420,140 Z"/>
+      </g>
+      <g fill="#3f5a7a" opacity="0.35">
+        <path d="M0,140 L0,128 L56,114 L102,124 L150,108 L198,122 L246,110 L294,126 L342,112 L390,124 L420,118 L420,140 Z"/>
+      </g>
+
+      <!-- horizon wisps -->
+      <g stroke="#c28a2a" stroke-width="0.5" opacity="0.35" fill="none" filter="url(#soft)">
+        <path d="M30 124 Q 80 120, 130 124"/>
+        <path d="M220 128 Q 280 124, 340 128"/>
+      </g>
+    </svg>
+
+    <p class="hero-quote" id="heroQuote">
+      <span id="heroQuoteText">&nbsp;</span>
+      <span class="hero-quote-attr" id="heroQuoteAttr"></span>
+    </p>
   </section>
 
   <div class="footer-status" id="footerStatus">
@@ -603,8 +854,13 @@
 <!-- EDIT ROW MODAL -->
 <div class="modal-bg" id="editModal">
   <div class="modal">
-    <h2>Edit entry</h2>
+    <h2 id="editModalTitle">Edit entry</h2>
     <div class="modal-sub" id="editDateLabel">—</div>
+
+    <div class="field" id="editDateField" style="display:none;">
+      <label>Date (morning of)</label>
+      <input type="date" id="editDate" />
+    </div>
 
     <div class="edit-row">
       <div class="field">
@@ -892,20 +1148,27 @@ function getRangeData(range) {
     return [lo, hi];
   });
 
-  return { labels, bars, lateFlags };
+  // duration in hours — only when BOTH sleep & wake exist (meaningful)
+  const durations = sleepData.map((s, i) => {
+    const w = wakeData[i];
+    if (s === null || w === null) return null;
+    return w - s;  // already on the night-axis, so diff is correct hours
+  });
+
+  return { labels, bars, lateFlags, durations };
 }
 
 function renderChart() {
-  const { labels, bars, lateFlags } = getRangeData(currentRange);
+  const { labels, bars, lateFlags, durations } = getRangeData(currentRange);
   const ctx = document.getElementById('chart').getContext('2d');
 
   const bgColors = bars.map((b,i) => {
-    if (!b) return 'rgba(255,255,255,0.04)';
-    return lateFlags[i] ? 'rgba(217,122,108,0.78)' : 'rgba(136,160,200,0.82)';
+    if (!b) return 'rgba(0,0,0,0.04)';
+    return lateFlags[i] ? 'rgba(177,74,58,0.82)' : 'rgba(63,90,122,0.78)';
   });
   const borderColors = bars.map((b,i) => {
-    if (!b) return 'rgba(255,255,255,0.06)';
-    return lateFlags[i] ? 'rgba(217,122,108,1)' : 'rgba(136,160,200,1)';
+    if (!b) return 'rgba(0,0,0,0.06)';
+    return lateFlags[i] ? 'rgba(177,74,58,1)' : 'rgba(63,90,122,1)';
   });
 
   if (chart) chart.destroy();
@@ -928,16 +1191,19 @@ function renderChart() {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      layout: {
+        padding: { top: 18 }  // make room for duration labels above bars
+      },
       plugins: {
         legend: { display: false },
         tooltip: {
-          backgroundColor: '#11162a',
-          borderColor: 'rgba(255,255,255,0.1)',
+          backgroundColor: '#2a2620',
+          borderColor: 'rgba(0,0,0,0.1)',
           borderWidth: 1,
           titleFont: { family: 'JetBrains Mono', size: 11 },
           bodyFont:  { family: 'JetBrains Mono', size: 11 },
-          titleColor: '#ece9e0',
-          bodyColor:  '#8a8b95',
+          titleColor: '#fbf8f1',
+          bodyColor:  '#c8c2b5',
           padding: 10,
           callbacks: {
             label: (ctx) => {
@@ -967,7 +1233,7 @@ function renderChart() {
         x: {
           grid: { display: false },
           ticks: {
-            color: '#4a4d5a',
+            color: '#a8a298',
             font: { family: 'JetBrains Mono', size: 9 },
             maxRotation: 0,
             autoSkip: true,
@@ -978,9 +1244,9 @@ function renderChart() {
           min: -4,   // 20:00
           max: 12,   // 12:00
           reverse: true,   // sleep (top) → wake (bottom), reads downward like the night itself
-          grid: { color: 'rgba(255,255,255,0.04)' },
+          grid: { color: 'rgba(40,35,30,0.06)' },
           ticks: {
-            color: '#4a4d5a',
+            color: '#a8a298',
             font: { family: 'JetBrains Mono', size: 9 },
             stepSize: 2,
             callback: (v) => {
@@ -1000,7 +1266,7 @@ function renderChart() {
         ctx.save();
         ctx.setLineDash([4, 4]);
         ctx.lineWidth = 1.2;
-        ctx.strokeStyle = 'rgba(217,122,108,0.55)';
+        ctx.strokeStyle = 'rgba(177,74,58,0.6)';
 
         // sleep limit (00:00 → y=0)
         const ySleep = scales.y.getPixelForValue(SLEEP_LIMIT);
@@ -1018,11 +1284,40 @@ function renderChart() {
 
         // labels — placed BELOW the line because axis is reversed
         ctx.setLineDash([]);
-        ctx.fillStyle = 'rgba(217,122,108,0.85)';
+        ctx.fillStyle = 'rgba(177,74,58,0.9)';
         ctx.font = '9px "JetBrains Mono", monospace';
         ctx.textAlign = 'right';
         ctx.fillText('00:00 limit', chartArea.right - 4, ySleep + 12);
         ctx.fillText('08:00 limit', chartArea.right - 4, yWake + 12);
+        ctx.restore();
+      }
+    }, {
+      id: 'durationLabels',
+      afterDatasetsDraw(chart) {
+        const { ctx } = chart;
+        const meta = chart.getDatasetMeta(0);
+        if (!meta || !meta.data) return;
+
+        ctx.save();
+        ctx.font = '600 10px "JetBrains Mono", monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+
+        meta.data.forEach((bar, i) => {
+          const dur = durations[i];
+          if (dur === null || dur === undefined || dur <= 0) return;
+
+          const topY = Math.min(bar.y, bar.base);
+          const x = bar.x;
+          const label = `${dur.toFixed(1)}h`;
+
+          if (topY < chart.chartArea.top + 14) return;
+
+          // subtle text — tinted the same color as the bar
+          ctx.fillStyle = lateFlags[i] ? 'rgba(177,74,58,1)' : 'rgba(63,90,122,1)';
+          ctx.fillText(label, x, topY - 5);
+        });
+
         ctx.restore();
       }
     }]
@@ -1060,30 +1355,73 @@ document.getElementById('rangeTabs').addEventListener('click', (e) => {
 function openEditModal(key) {
   editingDate = key;
   const r = records[key] || {};
+  document.getElementById('editModalTitle').textContent = 'Edit entry';
   document.getElementById('editDateLabel').textContent = shortDate(key);
+  document.getElementById('editDateField').style.display = 'none';
   document.getElementById('editSleep').value = r.sleep || '';
   document.getElementById('editWake').value  = r.wake || '';
+  document.getElementById('deleteEntry').style.display = '';
   document.getElementById('editModal').classList.add('open');
 }
+
+function openAddModal() {
+  editingDate = null;  // signals "add mode" until user picks a date
+  document.getElementById('editModalTitle').textContent = 'Add / edit entry';
+  document.getElementById('editDateLabel').textContent = 'pick any date';
+  document.getElementById('editDateField').style.display = '';
+  document.getElementById('editDate').value = todayKey();
+  // prefill with today's record if it exists
+  const r = records[todayKey()] || {};
+  document.getElementById('editSleep').value = r.sleep || '';
+  document.getElementById('editWake').value  = r.wake || '';
+  document.getElementById('deleteEntry').style.display = 'none';
+  document.getElementById('editModal').classList.add('open');
+}
+
+// when user changes the date in add-mode, prefill existing values for that date
+document.getElementById('editDate').addEventListener('change', (e) => {
+  const key = e.target.value;
+  if (!key) return;
+  const r = records[key] || {};
+  document.getElementById('editSleep').value = r.sleep || '';
+  document.getElementById('editWake').value  = r.wake || '';
+  document.getElementById('editDateLabel').textContent = shortDate(key);
+  // if there IS an existing entry for that date, show delete link
+  document.getElementById('deleteEntry').style.display = (r.sleep || r.wake) ? '' : 'none';
+});
+
+document.getElementById('addEntryBtn').addEventListener('click', openAddModal);
+
 document.getElementById('cancelEdit').addEventListener('click', closeEditModal);
 function closeEditModal() {
   document.getElementById('editModal').classList.remove('open');
   editingDate = null;
 }
 document.getElementById('saveEdit').addEventListener('click', () => {
-  if (!editingDate) return;
+  // determine target date
+  const dateField = document.getElementById('editDateField');
+  const targetKey = (dateField.style.display !== 'none')
+    ? document.getElementById('editDate').value
+    : editingDate;
+
+  if (!targetKey) { alert('Please pick a date.'); return; }
+
   const s = document.getElementById('editSleep').value || null;
   const w = document.getElementById('editWake').value || null;
-  if (!s && !w) { delete records[editingDate]; }
-  else { records[editingDate] = { sleep: s, wake: w }; }
+  if (!s && !w) { delete records[targetKey]; }
+  else { records[targetKey] = { sleep: s, wake: w }; }
   saveRecords();
   render();
   closeEditModal();
 });
 document.getElementById('deleteEntry').addEventListener('click', () => {
-  if (!editingDate) return;
+  const dateField = document.getElementById('editDateField');
+  const targetKey = (dateField.style.display !== 'none')
+    ? document.getElementById('editDate').value
+    : editingDate;
+  if (!targetKey) return;
   if (!confirm('Delete this entry?')) return;
-  delete records[editingDate];
+  delete records[targetKey];
   saveRecords();
   render();
   closeEditModal();
@@ -1228,8 +1566,36 @@ function updateFooterStatus() {
   setFooterStatus(settings.token ? 'live' : 'off');
 }
 
+/* ---------- hero quote (daily rotation) ---------- */
+const QUOTES = [
+  { t: "The best bridge between despair and hope is a good night's sleep.", a: "E. Joseph Cossman" },
+  { t: "Sleep is the best meditation.", a: "Dalai Lama" },
+  { t: "Each night, when I go to sleep, I die. And the next morning, when I wake up, I am reborn.", a: "Mahatma Gandhi" },
+  { t: "A well-spent day brings happy sleep.", a: "Leonardo da Vinci" },
+  { t: "There is a time for many words, and there is also a time for sleep.", a: "Homer" },
+  { t: "Sleep is that golden chain that ties health and our bodies together.", a: "Thomas Dekker" },
+  { t: "Even a soul submerged in sleep is hard at work and helps make something of the world.", a: "Heraclitus" },
+  { t: "Night, the beloved. Night, when words fade and things come alive.", a: "Antoine de Saint-Exupéry" },
+  { t: "The moon will guide you through the night with her brightness, but she will always dwell in the darkness.", a: "C. JoyBell C." },
+  { t: "床前明月光,疑是地上霜。", a: "李白" },
+  { t: "Finish each day before you begin the next, and interpose a solid wall of sleep between the two.", a: "Ralph Waldo Emerson" },
+  { t: "Sleep is the golden chain that binds health and our bodies together.", a: "Thomas Dekker" },
+  { t: "O sleep, O gentle sleep, nature's soft nurse.", a: "William Shakespeare" },
+  { t: "To sleep, perchance to dream.", a: "William Shakespeare" },
+  { t: "Rest when you're weary. Refresh and renew yourself.", a: "Ralph Marston" },
+];
+function showDailyQuote() {
+  // deterministic daily pick so it doesn't change on every refresh
+  const d = new Date();
+  const seed = d.getFullYear() * 1000 + d.getMonth() * 40 + d.getDate();
+  const q = QUOTES[seed % QUOTES.length];
+  document.getElementById('heroQuoteText').textContent = `"${q.t}"`;
+  document.getElementById('heroQuoteAttr').textContent = '— ' + q.a;
+}
+
 /* ---------- initial load ---------- */
 async function init() {
+  showDailyQuote();
   render();
   updateFooterStatus();
   if (settings.token && settings.gistId) {
